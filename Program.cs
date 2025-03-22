@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.AspNetCore.Components.Authorization;
 using CeilUfas;
+using Npgsql;
+
+// Configure Npgsql to use legacy timestamp behavior
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -22,6 +26,7 @@ builder.Services.AddRadzenCookieThemeService(options =>
 builder.Services.AddHttpClient();
 builder.Services.AddLocalization();
 builder.Services.AddScoped<CeilUfas.ceilufasService>();
+
 builder.Services.AddDbContext<CeilUfas.Data.ceilufasContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("ceilufasConnection"));

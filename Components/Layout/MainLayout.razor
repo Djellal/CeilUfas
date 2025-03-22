@@ -45,9 +45,9 @@
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="Home" Path="" Icon="home_app_logo" />
             <RadzenPanelMenuItem Text="Admin" Icon="admin_panel_settings" Visible="Security.IsInRole(Globals.Admin)">
-                <RadzenPanelMenuItem Path="app-settings" Text="Application Settings" Icon="manufacturing"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Application Settings" Icon="manufacturing" Path="app-settings"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Path="sessions" Text="Sessions" Icon="event_note"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Text="Sessions" Path="sessions" />
         </RadzenPanelMenu>
         <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
             <RadzenText Text="CeilUfas v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />

@@ -1,0 +1,91 @@
+@page "/add-session"
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+
+@inject ceilufasService ceilufasService
+
+<PageTitle>Add Session</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Session</RadzenAlert>
+        <RadzenTemplateForm TItem="CeilUfas.Models.ceilufas.Session" Data="@(session)" Visible="@(session != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Session Code" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(session.SessionCode)" Name="SessionCode" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="SessionCode" Text="SessionCode is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Session Name" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(session.SessionName)" Name="SessionName" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="SessionName" Text="SessionName is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Session Name Ar" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(session.SessionNameAr)" Name="SessionNameAr" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="SessionNameAr" Text="SessionNameAr is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Start Date" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@(session.StartDate)" Name="StartDate" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="StartDate" Text="StartDate is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="End Date" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@(session.EndDate)" Name="EndDate" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="EndDate" Text="EndDate is required" />
+                  </Helper>
+            </RadzenFormField>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        session = new CeilUfas.Models.ceilufas.Session();
+    }
+    protected bool errorVisible;
+    protected CeilUfas.Models.ceilufas.Session session;
+
+    protected async Task FormSubmit()
+    {
+        try
+        {
+            await ceilufasService.CreateSession(session);
+            DialogService.Close(session);
+        }
+        catch (Exception ex)
+        {
+            errorVisible = true;
+        }
+    }
+
+    protected async Task CancelButtonClick(MouseEventArgs args)
+    {
+        DialogService.Close(null);
+    }
+}
