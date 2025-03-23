@@ -1,4 +1,6 @@
 @page "/app-settings"
+@using Microsoft.EntityFrameworkCore
+@inject Microsoft.Extensions.Localization.IStringLocalizer<AppSettings> L
 
 @attribute [Authorize]
 @inject IJSRuntime JSRuntime
@@ -67,8 +69,7 @@
                     </RadzenRow>
                     <RadzenRow style="margin-bottom: 1.5rem">
                         <RadzenColumn SizeMD="3">
-<RadzenIcon Icon="contact_phone" class="me-2" />
-<RadzenLabel Text="Email" Component="Email" style="width: 100%" />
+                            <RadzenLabel Text="Email" Component="Email" style="width: 100%" />
                         </RadzenColumn>
                         <RadzenColumn SizeMD="9">
                             <RadzenTextBox style="display: block; width: 100%" @bind-Value="appSetting.Email" Name="Email" />
@@ -148,7 +149,7 @@
                         </RadzenColumn>
                         <RadzenColumn SizeMD="9">
                             <RadzenDropDown TextProperty="SessionNameAr" ValueProperty="Id" Placeholder="Choose Session" 
-                                style="display: block; width: 100%" @bind-Value="appSetting.CurrentSessionId" Name="CurrentSessionId" />
+                                style="display: block; width: 100%" @bind-Value="appSetting.CurrentSessionId" Name="CurrentSessionId" Data="@Sessions" AllowClear="true" />
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow style="margin-bottom: 1.5rem">
@@ -175,15 +176,51 @@
 
 @code {
    
-    protected CeilUfas.Models.ceilufas.AppSetting appSetting = Globals.appSettings;
-    
+    protected CeilUfas.Models.ceilufas.AppSetting appSetting { get; set; } = Globals.appSettings;
+    List<CeilUfas.Models.ceilufas.Session> Sessions { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Get app settings and sessions in a single database operation
+            // to avoid context disposal issues
+           
+                
+                
+                // Create a new instance if no settings exist
+                if (appSetting == null)
+                {
+                    appSetting = new CeilUfas.Models.ceilufas.AppSetting();
+                }
+                
+                // Load sessions from the same context
+                Sessions = ceilufasService.dbContext.Sessions.ToList();
+               
+                
+            
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error Loading Settings",
+                    Detail = $"An error occurred: {ex.Message}",
+                    Duration = 4000
+                });
+
+            // Log the error
+            Console.WriteLine($"Error loading app settings: {ex}");
+        }
+    }
     async Task OnSubmit()
     {
         try
         {
             
             
-            var entity = ceilufasService.dbContext.AppSettings.Find(appSetting.Id);
+                var entity = ceilufasService.dbContext.AppSettings.Find(appSetting.Id);
                 if (entity != null)
                 {
                 ceilufasService.dbContext.Entry(entity).CurrentValues.SetValues(appSetting);
