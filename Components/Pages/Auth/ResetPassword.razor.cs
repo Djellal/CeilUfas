@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
 
-namespace CeilUfas.Components.Pages
+namespace CeilUfas.Components.Pages.Auth
 {
-    public partial class EditApplicationUser
+    public partial class ResetPassword
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -30,45 +30,41 @@ namespace CeilUfas.Components.Pages
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        protected IEnumerable<CeilUfas.Models.ApplicationRole> roles;
         protected CeilUfas.Models.ApplicationUser user;
-        protected IEnumerable<string> userRoles;
-        protected string error;
+        protected bool isBusy;
         protected bool errorVisible;
-
-        [Parameter]
-        public string Id { get; set; }
+        protected string error;
 
         [Inject]
         protected SecurityService Security { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            user = await Security.GetUserById($"{Id}");
-
-            userRoles = user.Roles.Select(role => role.Id);
-
-            roles = await Security.GetRoles();
+            user = new CeilUfas.Models.ApplicationUser();
         }
 
-        protected async Task FormSubmit(CeilUfas.Models.ApplicationUser user)
+        protected async Task FormSubmit()
         {
             try
             {
-                user.Roles = roles.Where(role => userRoles.Contains(role.Id)).ToList();
-                await Security.UpdateUser($"{Id}", user);
-                DialogService.Close(null);
+                isBusy = true;
+
+                await Security.ResetPassword(user.Email);
+
+                DialogService.Close(true);
             }
             catch (Exception ex)
             {
                 errorVisible = true;
                 error = ex.Message;
             }
+
+            isBusy = false;
         }
 
         protected async Task CancelClick()
         {
-            DialogService.Close(null);
+            DialogService.Close(false);
         }
     }
 }

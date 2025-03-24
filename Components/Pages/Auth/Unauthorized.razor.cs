@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
 
-namespace CeilUfas.Components.Pages
+namespace CeilUfas.Components.Pages.Auth
 {
     public partial class Unauthorized
     {

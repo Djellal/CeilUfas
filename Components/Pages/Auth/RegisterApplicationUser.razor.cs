@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
 
-namespace CeilUfas.Components.Pages
+namespace CeilUfas.Components.Pages.Auth
 {
-    public partial class Profile
+    public partial class RegisterApplicationUser
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -30,34 +30,41 @@ namespace CeilUfas.Components.Pages
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        protected string oldPassword = "";
-        protected string newPassword = "";
-        protected string confirmPassword = "";
         protected CeilUfas.Models.ApplicationUser user;
-        protected string error;
+        protected bool isBusy;
         protected bool errorVisible;
-        protected bool successVisible;
+        protected string error;
 
         [Inject]
         protected SecurityService Security { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            user = await Security.GetUserById($"{Security.User.Id}");
+            user = new CeilUfas.Models.ApplicationUser();
         }
 
         protected async Task FormSubmit()
         {
             try
             {
-                await Security.ChangePassword(oldPassword, newPassword);
-                successVisible = true;
+                isBusy = true;
+
+                await Security.Register(user.Email, user.Password);
+
+                DialogService.Close(true);
             }
             catch (Exception ex)
             {
                 errorVisible = true;
                 error = ex.Message;
             }
+
+            isBusy = false;
+        }
+
+        protected async Task CancelClick()
+        {
+            DialogService.Close(false);
         }
     }
 }

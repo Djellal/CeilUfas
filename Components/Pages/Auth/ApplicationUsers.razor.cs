@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
 
-namespace CeilUfas.Components.Pages
+namespace CeilUfas.Components.Pages.Auth
 {
-    public partial class ApplicationRoles
+    public partial class ApplicationUsers
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -30,8 +30,8 @@ namespace CeilUfas.Components.Pages
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        protected IEnumerable<CeilUfas.Models.ApplicationRole> roles;
-        protected RadzenDataGrid<CeilUfas.Models.ApplicationRole> grid0;
+        protected IEnumerable<CeilUfas.Models.ApplicationUser> users;
+        protected RadzenDataGrid<CeilUfas.Models.ApplicationUser> grid0;
         protected string error;
         protected bool errorVisible;
 
@@ -40,25 +40,32 @@ namespace CeilUfas.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            roles = await Security.GetRoles();
+            users = await Security.GetUsers();
         }
 
         protected async Task AddClick()
         {
-            await DialogService.OpenAsync<AddApplicationRole>("Add Application Role");
+            await DialogService.OpenAsync<AddApplicationUser>("Add Application User");
 
-            roles = await Security.GetRoles();
+            users = await Security.GetUsers();
         }
 
-        protected async Task DeleteClick(CeilUfas.Models.ApplicationRole role)
+        protected async Task RowSelect(CeilUfas.Models.ApplicationUser user)
+        {
+            await DialogService.OpenAsync<EditApplicationUser>("Edit Application User", new Dictionary<string, object>{ {"Id", user.Id} });
+
+            users = await Security.GetUsers();
+        }
+
+        protected async Task DeleteClick(CeilUfas.Models.ApplicationUser user)
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this role?") == true)
+                if (await DialogService.Confirm("Are you sure you want to delete this user?") == true)
                 {
-                    await Security.DeleteRole($"{role.Id}");
+                    await Security.DeleteUser($"{user.Id}");
 
-                    roles = await Security.GetRoles();
+                    users = await Security.GetUsers();
                 }
             }
             catch (Exception ex)

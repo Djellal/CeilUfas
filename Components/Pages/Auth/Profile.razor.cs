@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
 
-namespace CeilUfas.Components.Pages
+namespace CeilUfas.Components.Pages.Auth
 {
-    public partial class AddApplicationUser
+    public partial class Profile
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -30,40 +30,34 @@ namespace CeilUfas.Components.Pages
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        protected IEnumerable<CeilUfas.Models.ApplicationRole> roles;
+        protected string oldPassword = "";
+        protected string newPassword = "";
+        protected string confirmPassword = "";
         protected CeilUfas.Models.ApplicationUser user;
-        protected IEnumerable<string> userRoles = Enumerable.Empty<string>();
         protected string error;
         protected bool errorVisible;
+        protected bool successVisible;
 
         [Inject]
         protected SecurityService Security { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            user = new CeilUfas.Models.ApplicationUser();
-
-            roles = await Security.GetRoles();
+            user = await Security.GetUserById($"{Security.User.Id}");
         }
 
-        protected async Task FormSubmit(CeilUfas.Models.ApplicationUser user)
+        protected async Task FormSubmit()
         {
             try
             {
-                user.Roles = roles.Where(role => userRoles.Contains(role.Id)).ToList();
-                await Security.CreateUser(user);
-                DialogService.Close(null);
+                await Security.ChangePassword(oldPassword, newPassword);
+                successVisible = true;
             }
             catch (Exception ex)
             {
                 errorVisible = true;
                 error = ex.Message;
             }
-        }
-
-        protected async Task CancelClick()
-        {
-            DialogService.Close(null);
         }
     }
 }

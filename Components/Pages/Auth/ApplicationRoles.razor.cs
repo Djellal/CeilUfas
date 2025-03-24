@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
 
-namespace CeilUfas.Components.Pages
+namespace CeilUfas.Components.Pages.Auth
 {
-    public partial class AddApplicationRole
+    public partial class ApplicationRoles
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -30,7 +30,8 @@ namespace CeilUfas.Components.Pages
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        protected CeilUfas.Models.ApplicationRole role;
+        protected IEnumerable<CeilUfas.Models.ApplicationRole> roles;
+        protected RadzenDataGrid<CeilUfas.Models.ApplicationRole> grid0;
         protected string error;
         protected bool errorVisible;
 
@@ -39,27 +40,32 @@ namespace CeilUfas.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            role = new CeilUfas.Models.ApplicationRole();
+            roles = await Security.GetRoles();
         }
 
-        protected async Task FormSubmit(CeilUfas.Models.ApplicationRole role)
+        protected async Task AddClick()
+        {
+            await DialogService.OpenAsync<AddApplicationRole>("Add Application Role");
+
+            roles = await Security.GetRoles();
+        }
+
+        protected async Task DeleteClick(CeilUfas.Models.ApplicationRole role)
         {
             try
             {
-                await Security.CreateRole(role);
+                if (await DialogService.Confirm("Are you sure you want to delete this role?") == true)
+                {
+                    await Security.DeleteRole($"{role.Id}");
 
-                DialogService.Close(null);
+                    roles = await Security.GetRoles();
+                }
             }
             catch (Exception ex)
             {
                 errorVisible = true;
                 error = ex.Message;
             }
-        }
-
-        protected async Task CancelClick()
-        {
-            DialogService.Close(null);
         }
     }
 }
