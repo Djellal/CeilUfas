@@ -1,0 +1,94 @@
+@page "/add-course"
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+
+@inject ceilufasService ceilufasService
+
+<PageTitle>Add Course</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Course</RadzenAlert>
+        <RadzenTemplateForm TItem="CeilUfas.Models.ceilufas.Course" Data="@(course)" Visible="@(course != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Code" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(course.Code)" Name="Code" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Code" Text="Code is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Name" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(course.Name)" Name="Name" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Name" Text="Name is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Name Ar" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(course.NameAr)" Name="NameAr" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="NameAr" Text="NameAr is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Duration" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(course.Duration)" Name="Duration" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Duration" Text="Duration is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Course Type" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenDropDown Data="@(courseTypesForCourseTypeId)" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                          style="display: block; width: 100%" @bind-Value="@(course.CourseTypeId)" Name="CourseTypeId"
+                           />
+              </ChildContent>
+            </RadzenFormField>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        course = new CeilUfas.Models.ceilufas.Course();
+
+        courseTypesForCourseTypeId = await ceilufasService.GetCourseTypes();
+    }
+    protected bool errorVisible;
+    protected CeilUfas.Models.ceilufas.Course course;
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.CourseType> courseTypesForCourseTypeId;
+
+    protected async Task FormSubmit()
+    {
+        try
+        {
+            await ceilufasService.CreateCourse(course);
+            DialogService.Close(course);
+        }
+        catch (Exception ex)
+        {
+            errorVisible = true;
+        }
+    }
+
+    protected async Task CancelButtonClick(MouseEventArgs args)
+    {
+        DialogService.Close(null);
+    }
+}

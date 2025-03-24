@@ -1,0 +1,213 @@
+@page "/courses"
+
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+
+@inject ceilufasService ceilufasService
+
+<PageTitle>Courses</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="Courses" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+      <RadzenColumn SizeMD=12>
+        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"  Render=Grid0Render AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+            Data="@(courses)" TItem="CeilUfas.Models.ceilufas.Course" RowDoubleClick="@EditRow" RowSelect="@GetChildData">
+            <Columns>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="Code" Title="Code">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="Name" Title="Name">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="NameAr" Title="Name Ar">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="Duration" Title="Duration">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="CourseType.Description" Title="Course Type">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                    <Template Context="course">
+
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                            Shade="Shade.Lighter" Variant="Variant.Flat"
+                            Click=@(args => GridDeleteButtonClick(args, course)) @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+                <RadzenStack Class="rz-my-8">
+                    <RadzenRow Gap="0" AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenText Visible="@(courseChild != null)" Text="CourseLevels" TextStyle="TextStyle.H4" TagName="TagName.H2" style="margin: 0" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                                <RadzenButton Visible="@(courseChild != null)" Icon="add_circle_outline" Text="Add" Click=@(args => CourseLevelsAddButtonClick(args,courseChild)) />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenDataGrid ColumnWidth="200px" Visible="@(courseChild != null)" @ref=CourseLevelsDataGrid AllowFiltering="true" FilterMode="Radzen.FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+                      Data="@courseChild?.CourseLevels" TItem="CeilUfas.Models.ceilufas.CourseLevel"  RowSelect="@(args => CourseLevelsRowSelect(args, courseChild))">
+                      <Columns>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Id" Title="Id">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Name" Title="Name">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="NameAr" Title="Name Ar">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Duration" Title="Duration">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Course.NameAr" Title="Course">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="CourseLevel1.NameAr" Title="Course Level1">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                            <Template Context="courseLevelChild">
+
+                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium" Shade="Shade.Lighter" Variant="Variant.Flat"
+                                    Click=@(args => CourseLevelsDeleteButtonClick(args, courseLevelChild)) @onclick:stopPropagation="true" />
+                            </Template>
+                        </RadzenDataGridColumn>
+                      </Columns>
+                    </RadzenDataGrid>
+                </RadzenStack>
+    </RadzenColumn>
+  </RadzenRow>
+</RadzenStack>
+@code {
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.Course> courses;
+
+    protected RadzenDataGrid<CeilUfas.Models.ceilufas.Course> grid0;
+    protected override async Task OnInitializedAsync()
+    {
+        courses = await ceilufasService.GetCourses(new Query { Expand = "CourseType" });
+    }
+
+    protected async Task AddButtonClick(MouseEventArgs args)
+    {
+        await DialogService.OpenAsync<AddCourse>("Add Course", null);
+        await grid0.Reload();
+    }
+
+    protected async Task EditRow(DataGridRowMouseEventArgs<CeilUfas.Models.ceilufas.Course> args)
+    {
+        await DialogService.OpenAsync<EditCourse>("Edit Course", new Dictionary<string, object> { {"Id", args.Data.Id} });
+    }
+
+    protected async Task GridDeleteButtonClick(MouseEventArgs args, CeilUfas.Models.ceilufas.Course course)
+    {
+        try
+        {
+            if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+            {
+                var deleteResult = await ceilufasService.DeleteCourse(course.Id);
+
+                if (deleteResult != null)
+                {
+                    await grid0.Reload();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = $"Error",
+                Detail = $"Unable to delete Course"
+            });
+        }
+    }
+
+    protected CeilUfas.Models.ceilufas.Course courseChild;
+    protected async Task GetChildData(CeilUfas.Models.ceilufas.Course args)
+    {
+        courseChild = args;
+        var CourseLevelsResult = await ceilufasService.GetCourseLevels(new Query { Filter = $@"i => i.CourseId == {args.Id}", Expand = "Course,CourseLevel1" });
+        if (CourseLevelsResult != null)
+        {
+            args.CourseLevels = CourseLevelsResult.ToList();
+        }
+    }
+    protected CeilUfas.Models.ceilufas.CourseLevel courseLevelCourseLevels;
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.Course> coursesForCourseIdCourseLevels;
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.CourseLevel> courseLevelsForPreviousCourseLevelIdCourseLevels;
+
+    protected RadzenDataGrid<CeilUfas.Models.ceilufas.CourseLevel> CourseLevelsDataGrid;
+
+    protected async Task CourseLevelsAddButtonClick(MouseEventArgs args, CeilUfas.Models.ceilufas.Course data)
+    {
+
+        var dialogResult = await DialogService.OpenAsync<AddCourseLevel>("Add CourseLevels", new Dictionary<string, object> { {"CourseId" , data.Id} });
+        await GetChildData(data);
+        await CourseLevelsDataGrid.Reload();
+
+    }
+
+    protected async Task CourseLevelsRowSelect(CeilUfas.Models.ceilufas.CourseLevel args, CeilUfas.Models.ceilufas.Course data)
+    {
+        var dialogResult = await DialogService.OpenAsync<EditCourseLevel>("Edit CourseLevels", new Dictionary<string, object> { {"Id", args.Id} });
+        await GetChildData(data);
+        await CourseLevelsDataGrid.Reload();
+    }
+
+    protected async Task CourseLevelsDeleteButtonClick(MouseEventArgs args, CeilUfas.Models.ceilufas.CourseLevel courseLevel)
+    {
+        try
+        {
+            if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+            {
+                var deleteResult = await ceilufasService.DeleteCourseLevel(courseLevel.Id);
+
+                await GetChildData(courseChild);
+
+                if (deleteResult != null)
+                {
+                    await CourseLevelsDataGrid.Reload();
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = $"Error",
+                Detail = $"Unable to delete CourseLevel"
+            });
+        }
+    }
+
+    string lastFilter;
+    protected async void Grid0Render(DataGridRenderEventArgs<CeilUfas.Models.ceilufas.Course> args)
+    {
+        if (grid0.Query.Filter != lastFilter)
+        {
+            courseChild = grid0.View.FirstOrDefault();
+        }
+
+        if (grid0.Query.Filter != lastFilter && courseChild != null)
+        {
+            await grid0.SelectRow(courseChild);
+        }
+
+        lastFilter = grid0.Query.Filter;
+    }
+}

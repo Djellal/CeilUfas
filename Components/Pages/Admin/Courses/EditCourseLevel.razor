@@ -1,0 +1,134 @@
+@page "/edit-course-level"
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+
+@inject ceilufasService ceilufasService
+
+<PageTitle>Edit CourseLevel</PageTitle>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save CourseLevel</RadzenAlert>
+        <RadzenTemplateForm TItem="CeilUfas.Models.ceilufas.CourseLevel" Data="@(courseLevel)" Visible="@(courseLevel != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Name" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(courseLevel.Name)" Name="Name" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Name" Text="Name is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Name Ar" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(courseLevel.NameAr)" Name="NameAr" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="NameAr" Text="NameAr is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Duration" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(courseLevel.Duration)" Name="Duration" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Duration" Text="Duration is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Course" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenDropDown Data="@(coursesForCourseId)" TextProperty="NameAr" ValueProperty="Id" AllowClear=true
+                        Disabled=@(hasCourseIdValue)  style="display: block; width: 100%" @bind-Value="@(courseLevel.CourseId)" Name="CourseId"
+                           />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Course Level1" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenDropDown Data="@(courseLevelsForPreviousCourseLevelId)" TextProperty="NameAr" ValueProperty="Id" AllowClear=true
+                        Disabled=@(hasPreviousCourseLevelIdValue)  style="display: block; width: 100%" @bind-Value="@(courseLevel.PreviousCourseLevelId)" Name="PreviousCourseLevelId"
+                           />
+              </ChildContent>
+            </RadzenFormField>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        courseLevel = await ceilufasService.GetCourseLevelById(Id);
+
+        coursesForCourseId = await ceilufasService.GetCourses();
+
+        courseLevelsForPreviousCourseLevelId = await ceilufasService.GetCourseLevels();
+    }
+    protected bool errorVisible;
+    protected CeilUfas.Models.ceilufas.CourseLevel courseLevel;
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.Course> coursesForCourseId;
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.CourseLevel> courseLevelsForPreviousCourseLevelId;
+
+    protected async Task FormSubmit()
+    {
+        try
+        {
+            await ceilufasService.UpdateCourseLevel(Id, courseLevel);
+            DialogService.Close(courseLevel);
+        }
+        catch (Exception ex)
+        {
+            errorVisible = true;
+        }
+    }
+
+    protected async Task CancelButtonClick(MouseEventArgs args)
+    {
+        DialogService.Close(null);
+    }
+
+
+
+
+
+    bool hasCourseIdValue;
+
+    [Parameter]
+    public int CourseId { get; set; }
+
+    bool hasPreviousCourseLevelIdValue;
+
+    [Parameter]
+    public int? PreviousCourseLevelId { get; set; }
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        courseLevel = new CeilUfas.Models.ceilufas.CourseLevel();
+
+        hasCourseIdValue = parameters.TryGetValue<int>("CourseId", out var hasCourseIdResult);
+
+        if (hasCourseIdValue)
+        {
+            courseLevel.CourseId = hasCourseIdResult;
+        }
+
+        hasPreviousCourseLevelIdValue = parameters.TryGetValue<int?>("PreviousCourseLevelId", out var hasPreviousCourseLevelIdResult);
+
+        if (hasPreviousCourseLevelIdValue)
+        {
+            courseLevel.PreviousCourseLevelId = hasPreviousCourseLevelIdResult;
+        }
+        await base.SetParametersAsync(parameters);
+    }
+}
