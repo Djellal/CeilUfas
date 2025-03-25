@@ -29,6 +29,8 @@ namespace CeilUfas.Models.ceilufas
 
         public CourseType CourseType { get; set; }
 
+        public bool IsActive { get; set; }
+
         public ICollection<CourseRegistration> CourseRegistrations { get; set; }
 
         public ICollection<CourseLevel> CourseLevels { get; set; }
