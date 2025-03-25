@@ -1,0 +1,201 @@
+@page "/states"
+
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+
+@inject ceilufasService ceilufasService
+
+<PageTitle>States</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="States" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+      <RadzenColumn SizeMD=12>
+        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"  Render=Grid0Render AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+            Data="@(states)" TItem="CeilUfas.Models.ceilufas.State" RowDoubleClick="@EditRow" RowSelect="@GetChildData">
+            <Columns>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Id" Title="Id">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Name" Title="Name">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="NameAr" Title="Name Ar">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                    <Template Context="state">
+
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                            Shade="Shade.Lighter" Variant="Variant.Flat"
+                            Click=@(args => GridDeleteButtonClick(args, state)) @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+                <RadzenStack Class="rz-my-8">
+                    <RadzenRow Gap="0" AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenText Visible="@(stateChild != null)" Text="Municipalities" TextStyle="TextStyle.H4" TagName="TagName.H2" style="margin: 0" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                                <RadzenButton Visible="@(stateChild != null)" Icon="add_circle_outline" Text="Add" Click=@(args => MunicipalitiesAddButtonClick(args,stateChild)) />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenDataGrid ColumnWidth="200px" Visible="@(stateChild != null)" @ref=MunicipalitiesDataGrid AllowFiltering="true" FilterMode="Radzen.FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+                      Data="@stateChild?.Municipalities" TItem="CeilUfas.Models.ceilufas.Municipality"  RowSelect="@(args => MunicipalitiesRowSelect(args, stateChild))">
+                      <Columns>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="Name" Title="Name">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="NameAr" Title="Name Ar">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="State.NameAr" Title="State">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                            <Template Context="municipalityChild">
+
+                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium" Shade="Shade.Lighter" Variant="Variant.Flat"
+                                    Click=@(args => MunicipalitiesDeleteButtonClick(args, municipalityChild)) @onclick:stopPropagation="true" />
+                            </Template>
+                        </RadzenDataGridColumn>
+                      </Columns>
+                    </RadzenDataGrid>
+                </RadzenStack>
+    </RadzenColumn>
+  </RadzenRow>
+</RadzenStack>
+@code {
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.State> states;
+
+    protected RadzenDataGrid<CeilUfas.Models.ceilufas.State> grid0;
+    protected override async Task OnInitializedAsync()
+    {
+        states = await ceilufasService.GetStates();
+    }
+
+    protected async Task AddButtonClick(MouseEventArgs args)
+    {
+        await DialogService.OpenAsync<AddState>("Add State", null);
+        await grid0.Reload();
+    }
+
+    protected async Task EditRow(DataGridRowMouseEventArgs<CeilUfas.Models.ceilufas.State> args)
+    {
+        await DialogService.OpenAsync<EditState>("Edit State", new Dictionary<string, object> { {"Id", args.Data.Id} });
+    }
+
+    protected async Task GridDeleteButtonClick(MouseEventArgs args, CeilUfas.Models.ceilufas.State state)
+    {
+        try
+        {
+            if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+            {
+                var deleteResult = await ceilufasService.DeleteState(state.Id);
+
+                if (deleteResult != null)
+                {
+                    await grid0.Reload();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = $"Error",
+                Detail = $"Unable to delete State"
+            });
+        }
+    }
+
+    protected CeilUfas.Models.ceilufas.State stateChild;
+    protected async Task GetChildData(CeilUfas.Models.ceilufas.State args)
+    {
+        stateChild = args;
+        var MunicipalitiesResult = await ceilufasService.GetMunicipalities(new Query { Filter = $@"i => i.StateId == ""{args.Id}""", Expand = "State" });
+        if (MunicipalitiesResult != null)
+        {
+            args.Municipalities = MunicipalitiesResult.ToList();
+        }
+    }
+    protected CeilUfas.Models.ceilufas.Municipality municipalityMunicipalities;
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.State> statesForStateIdMunicipalities;
+
+    protected RadzenDataGrid<CeilUfas.Models.ceilufas.Municipality> MunicipalitiesDataGrid;
+
+    protected async Task MunicipalitiesAddButtonClick(MouseEventArgs args, CeilUfas.Models.ceilufas.State data)
+    {
+
+        var dialogResult = await DialogService.OpenAsync<AddMunicipality>("Add Municipalities", new Dictionary<string, object> { {"StateId" , data.Id} });
+        await GetChildData(data);
+        await MunicipalitiesDataGrid.Reload();
+
+    }
+
+    protected async Task MunicipalitiesRowSelect(CeilUfas.Models.ceilufas.Municipality args, CeilUfas.Models.ceilufas.State data)
+    {
+        var dialogResult = await DialogService.OpenAsync<EditMunicipality>("Edit Municipalities", new Dictionary<string, object> { {"Id", args.Id} });
+        await GetChildData(data);
+        await MunicipalitiesDataGrid.Reload();
+    }
+
+    protected async Task MunicipalitiesDeleteButtonClick(MouseEventArgs args, CeilUfas.Models.ceilufas.Municipality municipality)
+    {
+        try
+        {
+            if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+            {
+                var deleteResult = await ceilufasService.DeleteMunicipality(municipality.Id);
+
+                await GetChildData(stateChild);
+
+                if (deleteResult != null)
+                {
+                    await MunicipalitiesDataGrid.Reload();
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = $"Error",
+                Detail = $"Unable to delete Municipality"
+            });
+        }
+    }
+
+    string lastFilter;
+    protected async void Grid0Render(DataGridRenderEventArgs<CeilUfas.Models.ceilufas.State> args)
+    {
+        if (grid0.Query.Filter != lastFilter)
+        {
+            stateChild = grid0.View.FirstOrDefault();
+        }
+
+        if (grid0.Query.Filter != lastFilter && stateChild != null)
+        {
+            await grid0.SelectRow(stateChild);
+        }
+
+        lastFilter = grid0.Query.Filter;
+    }
+}

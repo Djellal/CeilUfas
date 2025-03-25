@@ -1,0 +1,98 @@
+@page "/add-municipality"
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+
+@inject ceilufasService ceilufasService
+
+<PageTitle>Add Municipality</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Municipality</RadzenAlert>
+        <RadzenTemplateForm TItem="CeilUfas.Models.ceilufas.Municipality" Data="@(municipality)" Visible="@(municipality != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Name" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(municipality.Name)" Name="Name" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Name" Text="Name is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Name Ar" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(municipality.NameAr)" Name="NameAr" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="NameAr" Text="NameAr is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="State" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenDropDown Data="@(statesForStateId)" TextProperty="NameAr" ValueProperty="Id" AllowClear=true
+                        Disabled=@(hasStateIdValue)  style="display: block; width: 100%" @bind-Value="@(municipality.StateId)" Name="StateId"
+                           />
+              </ChildContent>
+            </RadzenFormField>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        statesForStateId = await ceilufasService.GetStates();
+    }
+    protected bool errorVisible;
+    protected CeilUfas.Models.ceilufas.Municipality municipality;
+
+    protected IEnumerable<CeilUfas.Models.ceilufas.State> statesForStateId;
+
+    protected async Task FormSubmit()
+    {
+        try
+        {
+            await ceilufasService.CreateMunicipality(municipality);
+            DialogService.Close(municipality);
+        }
+        catch (Exception ex)
+        {
+            errorVisible = true;
+        }
+    }
+
+    protected async Task CancelButtonClick(MouseEventArgs args)
+    {
+        DialogService.Close(null);
+    }
+
+
+
+
+
+    bool hasStateIdValue;
+
+    [Parameter]
+    public string StateId { get; set; }
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        municipality = new CeilUfas.Models.ceilufas.Municipality();
+
+        hasStateIdValue = parameters.TryGetValue<string>("StateId", out var hasStateIdResult);
+
+        if (hasStateIdValue)
+        {
+            municipality.StateId = hasStateIdResult;
+        }
+        await base.SetParametersAsync(parameters);
+    }
+}
