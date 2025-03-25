@@ -11,73 +11,84 @@
 @inject ceilufasService ceilufasService
 
 <PageTitle>States</PageTitle>
-<RadzenStack>
-    <RadzenRow AlignItems="AlignItems.Center">
-        <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="States" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
-        </RadzenColumn>
-        <RadzenColumn Size="12" SizeMD="6">
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
-            </RadzenStack>
-        </RadzenColumn>
-    </RadzenRow>
-    <RadzenRow>
-      <RadzenColumn SizeMD=12>
-        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"  Render=Grid0Render AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-            Data="@(states)" TItem="CeilUfas.Models.ceilufas.State" RowDoubleClick="@EditRow" RowSelect="@GetChildData">
-            <Columns>
-                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Id" Title="Id">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Name" Title="Name">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="NameAr" Title="Name Ar">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
-                    <Template Context="state">
-
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
-                            Shade="Shade.Lighter" Variant="Variant.Flat"
-                            Click=@(args => GridDeleteButtonClick(args, state)) @onclick:stopPropagation="true" />
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-
-        </RadzenDataGrid>
-
-                <RadzenStack Class="rz-my-8">
-                    <RadzenRow Gap="0" AlignItems="AlignItems.Center">
-                        <RadzenColumn Size="12" SizeMD="6">
-                            <RadzenText Visible="@(stateChild != null)" Text="Municipalities" TextStyle="TextStyle.H4" TagName="TagName.H2" style="margin: 0" />
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeMD="6">
-                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                                <RadzenButton Visible="@(stateChild != null)" Icon="add_circle_outline" Text="Add" Click=@(args => MunicipalitiesAddButtonClick(args,stateChild)) />
-                            </RadzenStack>
-                        </RadzenColumn>
-                    </RadzenRow>
-                    <RadzenDataGrid ColumnWidth="200px" Visible="@(stateChild != null)" @ref=MunicipalitiesDataGrid AllowFiltering="true" FilterMode="Radzen.FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-                      Data="@stateChild?.Municipalities" TItem="CeilUfas.Models.ceilufas.Municipality"  RowSelect="@(args => MunicipalitiesRowSelect(args, stateChild))">
-                      <Columns>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="Name" Title="Name">
+<RadzenCard class="rz-shadow-3 rz-border-radius-4 rz-p-4 rz-mb-4">
+    <RadzenStack>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenText Text="States" TextStyle="Radzen.Blazor.TextStyle.H4" TagName="TagName.H1" style="margin: 0; color: var(--rz-primary);" />
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton Icon="add_circle_outline" Text="Add State" Click="@AddButtonClick" Variant="Variant.Filled" ButtonStyle="ButtonStyle.Primary" />
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn SizeMD=12>
+                <RadzenDataGrid @ref="grid0" ColumnWidth="200px" Render=Grid0Render AllowFiltering="true" FilterMode="FilterMode.Advanced" 
+                    AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+                    Data="@(states)" TItem="CeilUfas.Models.ceilufas.State" RowDoubleClick="@EditRow" RowSelect="@GetChildData"
+                    class="rz-mt-4" Style="border-radius: 8px; overflow: hidden;">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Id" Title="N°">
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="NameAr" Title="Name Ar">
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Name" Title="Name">
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="State.NameAr" Title="State">
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="NameAr" Title="Name Ar">
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
-                            <Template Context="municipalityChild">
-
-                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium" Shade="Shade.Lighter" Variant="Variant.Flat"
-                                    Click=@(args => MunicipalitiesDeleteButtonClick(args, municipalityChild)) @onclick:stopPropagation="true" />
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                            <Template Context="state">
+                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                                    Shade="Shade.Lighter" Variant="Variant.Flat"
+                                    Click=@(args => GridDeleteButtonClick(args, state)) @onclick:stopPropagation="true" />
                             </Template>
                         </RadzenDataGridColumn>
-                      </Columns>
-                    </RadzenDataGrid>
-                </RadzenStack>
-    </RadzenColumn>
-  </RadzenRow>
-</RadzenStack>
+                    </Columns>
+                </RadzenDataGrid>
+
+                <RadzenCard Visible="@(stateChild != null)" class="rz-shadow-2 rz-border-radius-4 rz-p-4 rz-mt-4">
+                    <RadzenStack Class="rz-my-4">
+                        <RadzenRow Gap="0" AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenText Text="Municipalities" TextStyle="Radzen.Blazor.TextStyle.H5" TagName="Radzen.Blazor.TagName.H5" style="margin: 0; color: var(--rz-secondary);" />
+                                <RadzenText TextStyle="TextStyle.Subtitle1" class="rz-mb-4">
+                                    @(stateChild?.Name) - @(stateChild?.NameAr)
+                                </RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                                    <RadzenButton Icon="add_circle_outline" Text="Add Municipality" Click=@(args => MunicipalitiesAddButtonClick(args,stateChild)) 
+                                        ButtonStyle="Radzen.ButtonStyle.Primary" Variant="Radzen.Variant.Filled" />
+                                </RadzenStack>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenDataGrid ColumnWidth="200px" @ref=MunicipalitiesDataGrid AllowFiltering="true" FilterMode="Radzen.FilterMode.Advanced" 
+                            AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+                            Data="@stateChild?.Municipalities" TItem="CeilUfas.Models.ceilufas.Municipality" 
+                            RowSelect="@(args => MunicipalitiesRowSelect(args, stateChild))"
+                            class="rz-mt-2" Style="border-radius: 8px; overflow: hidden;">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="Name" Title="Name">
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="NameAr" Title="Name Ar">
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Property="State.NameAr" Title="State">
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Municipality" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                                    <Template Context="municipalityChild">
+                                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium" Shade="Shade.Lighter" Variant="Variant.Flat"
+                                            Click=@(args => MunicipalitiesDeleteButtonClick(args, municipalityChild)) @onclick:stopPropagation="true" />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenStack>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenCard>
+
 @code {
 
     protected IEnumerable<CeilUfas.Models.ceilufas.State> states;

@@ -1,4 +1,5 @@
-@page "/add-state"
+@page "/add-state"
+
 @attribute [Authorize]
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
@@ -16,10 +17,10 @@
           <RadzenStack>
             <RadzenFormField Text="Id" Variant="Variant.Filled">
                   <ChildContent>
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(state.Id)" Name="Id" />
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(state.Id)" Name="N°" />
                   </ChildContent>    
                   <Helper>
-                    <RadzenRequiredValidator Component="Id" Text="Id is required" />
+                    <RadzenRequiredValidator Component="Id" Text="N°  is required" />
                   </Helper>
             </RadzenFormField>
             <RadzenFormField Text="Name" Variant="Variant.Filled">
