@@ -18,8 +18,8 @@ namespace CeilUfas.Models.ceilufas
         [Required]
         public string NameAr { get; set; }
 
-        public ICollection<Municipality> Municipalities { get; set; }
-
         public ICollection<CourseRegistration> CourseRegistrations { get; set; }
+
+        public ICollection<Municipality> Municipalities { get; set; }
     }
 }

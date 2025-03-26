@@ -1,11 +1,12 @@
-@page "/add-course"
-@attribute [Authorize]
+@page "/add-course"
 @inject IJSRuntime JSRuntime
+@attribute [Authorize]
 @inject NavigationManager NavigationManager
 @inject DialogService DialogService
 @inject ContextMenuService ContextMenuService
 @inject TooltipService TooltipService
 @inject NotificationService NotificationService
+@inject Microsoft.Extensions.Localization.IStringLocalizer<AddCourse> L
 
 @inject ceilufasService ceilufasService
 
@@ -51,6 +52,19 @@
                     <RadzenDropDown Data="@(courseTypesForCourseTypeId)" TextProperty="Description" ValueProperty="Id" AllowClear=true
                           style="display: block; width: 100%" @bind-Value="@(course.CourseTypeId)" Name="CourseTypeId"
                            />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Active" Component="IsActive" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@(course.IsActive)" Name="IsActive" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Image" Variant="Variant.Filled">
+                  <ChildContent>
+                    <RadzenFileInput TValue="string" @bind-Value="@course.Image"></RadzenFileInput>
               </ChildContent>
             </RadzenFormField>
           </RadzenStack>

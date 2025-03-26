@@ -1,6 +1,6 @@
-@page "/course-levels"
-@attribute [Authorize]
+@page "/course-levels"
 @inject IJSRuntime JSRuntime
+@attribute [Authorize]
 @inject NavigationManager NavigationManager
 @inject DialogService DialogService
 @inject ContextMenuService ContextMenuService
@@ -34,7 +34,7 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Duration" Title="Duration">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Course.NameAr" Title="Course">
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Course.Image" Title="Course">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="CourseLevel1.NameAr" Title="Course Level1">
                 </RadzenDataGridColumn>

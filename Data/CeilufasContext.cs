@@ -88,6 +88,10 @@ namespace CeilUfas.Data
               .HasForeignKey(i => i.StateId)
               .HasPrincipalKey(i => i.Id);
 
+            builder.Entity<CeilUfas.Models.ceilufas.Course>()
+              .Property(p => p.Image)
+              .HasDefaultValueSql(@"''::text");
+
             builder.Entity<CeilUfas.Models.ceilufas.CourseRegistration>()
               .Property(p => p.PaidFeeValue)
               .HasPrecision(18,2);

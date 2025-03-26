@@ -1,7 +1,6 @@
 @page "/courses"
-
-@attribute [Authorize]
 @inject IJSRuntime JSRuntime
+@attribute [Authorize]
 @inject NavigationManager NavigationManager
 @inject DialogService DialogService
 @inject ContextMenuService ContextMenuService
@@ -37,6 +36,10 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="CourseType.Description" Title="Course Type">
                 </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="IsActive" Title="Is Active">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="Image" Title="Image">
+                </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="course">
 
@@ -63,15 +66,13 @@
                     <RadzenDataGrid ColumnWidth="200px" Visible="@(courseChild != null)" @ref=CourseLevelsDataGrid AllowFiltering="true" FilterMode="Radzen.FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
                       Data="@courseChild?.CourseLevels" TItem="CeilUfas.Models.ceilufas.CourseLevel"  RowSelect="@(args => CourseLevelsRowSelect(args, courseChild))">
                       <Columns>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Id" Title="Id">
-                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Name" Title="Name">
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="NameAr" Title="Name Ar">
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Duration" Title="Duration">
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Course.NameAr" Title="Course">
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Course.Image" Title="Course">
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="CourseLevel1.NameAr" Title="Course Level1">
                         </RadzenDataGridColumn>

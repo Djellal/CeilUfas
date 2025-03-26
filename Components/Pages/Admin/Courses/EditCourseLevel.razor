@@ -1,6 +1,6 @@
-@page "/edit-course-level"
-@attribute [Authorize]
+@page "/edit-course-level"
 @inject IJSRuntime JSRuntime
+@attribute [Authorize]
 @inject NavigationManager NavigationManager
 @inject DialogService DialogService
 @inject ContextMenuService ContextMenuService
@@ -41,7 +41,7 @@
             </RadzenFormField>
             <RadzenFormField Text="Course" Variant="Variant.Filled">
                   <ChildContent>
-                    <RadzenDropDown Data="@(coursesForCourseId)" TextProperty="NameAr" ValueProperty="Id" AllowClear=true
+                    <RadzenDropDown Data="@(coursesForCourseId)" TextProperty="Image" ValueProperty="Id" AllowClear=true
                         Disabled=@(hasCourseIdValue)  style="display: block; width: 100%" @bind-Value="@(courseLevel.CourseId)" Name="CourseId"
                            />
               </ChildContent>

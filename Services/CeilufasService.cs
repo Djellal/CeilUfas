@@ -1358,8 +1358,8 @@ namespace CeilUfas
         {
             var itemToDelete = Context.Sessions
                               .Where(i => i.Id == id)
-                              .Include(i => i.AppSettings)
                               .Include(i => i.CourseRegistrations)
+                              .Include(i => i.AppSettings)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -1521,8 +1521,8 @@ namespace CeilUfas
         {
             var itemToDelete = Context.States
                               .Where(i => i.Id == id)
-                              .Include(i => i.Municipalities)
                               .Include(i => i.CourseRegistrations)
+                              .Include(i => i.Municipalities)
                               .FirstOrDefault();
 
             if (itemToDelete == null)

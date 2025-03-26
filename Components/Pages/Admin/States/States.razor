@@ -15,11 +15,11 @@
     <RadzenStack>
         <RadzenRow AlignItems="AlignItems.Center">
             <RadzenColumn Size="12" SizeMD="6">
-                <RadzenText Text="States" TextStyle="Radzen.Blazor.TextStyle.H4" TagName="TagName.H1" style="margin: 0; color: var(--rz-primary);" />
+                <RadzenText Text="States" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0; color: var(--rz-primary);" />
             </RadzenColumn>
             <RadzenColumn Size="12" SizeMD="6">
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                    <RadzenButton Icon="add_circle_outline" Text="Add State" Click="@AddButtonClick" Variant="Variant.Filled" ButtonStyle="ButtonStyle.Primary" />
+                    <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Filled" ButtonStyle="ButtonStyle.Primary" />
                 </RadzenStack>
             </RadzenColumn>
         </RadzenRow>
@@ -30,7 +30,7 @@
                     Data="@(states)" TItem="CeilUfas.Models.ceilufas.State" RowDoubleClick="@EditRow" RowSelect="@GetChildData"
                     class="rz-mt-4" Style="border-radius: 8px; overflow: hidden;">
                     <Columns>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Id" Title="N°">
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Id" Title="Id">
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.State" Property="Name" Title="Name">
                         </RadzenDataGridColumn>
@@ -50,7 +50,7 @@
                     <RadzenStack Class="rz-my-4">
                         <RadzenRow Gap="0" AlignItems="AlignItems.Center">
                             <RadzenColumn Size="12" SizeMD="6">
-                                <RadzenText Text="Municipalities" TextStyle="Radzen.Blazor.TextStyle.H5" TagName="Radzen.Blazor.TagName.H5" style="margin: 0; color: var(--rz-secondary);" />
+                                <RadzenText Text="Municipalities" TextStyle="TextStyle.H4" TagName="TagName.H2" style="margin: 0; color: var(--rz-secondary);" />
                                 <RadzenText TextStyle="TextStyle.Subtitle1" class="rz-mb-4">
                                     @(stateChild?.Name) - @(stateChild?.NameAr)
                                 </RadzenText>
@@ -58,7 +58,7 @@
                             <RadzenColumn Size="12" SizeMD="6">
                                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
                                     <RadzenButton Icon="add_circle_outline" Text="Add Municipality" Click=@(args => MunicipalitiesAddButtonClick(args,stateChild)) 
-                                        ButtonStyle="Radzen.ButtonStyle.Primary" Variant="Radzen.Variant.Filled" />
+                                        ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Outlined" />
                                 </RadzenStack>
                             </RadzenColumn>
                         </RadzenRow>

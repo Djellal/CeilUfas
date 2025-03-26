@@ -31,6 +31,8 @@ namespace CeilUfas.Models.ceilufas
 
         public bool IsActive { get; set; }
 
+        public string Image { get; set; }
+
         public ICollection<CourseRegistration> CourseRegistrations { get; set; }
 
         public ICollection<CourseLevel> CourseLevels { get; set; }
