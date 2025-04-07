@@ -52,6 +52,7 @@
                 <RadzenPanelMenuItem Path="professions" Text="Professions" Icon="cinematic_blur"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="states" Text="States" Icon="distance"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Path="login" Text="Login" Icon="input" Visible="!Security.IsAuthenticated()"></RadzenPanelMenuItem>
         </RadzenPanelMenu>
         <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
             <RadzenText Text="CeilUfas v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
