@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
 @inject IJSRuntime JSRuntime
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Index> L
 
 <PageTitle>@(Globals.appSettings?.OrganizationName ?? "Home")</PageTitle>
 
@@ -12,7 +13,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6" style="text-align: center">
-                <h1 class="display-4 fw-bold">Welcome to @(Globals.appSettings?.OrganizationName)</h1>
+                <h1 class="display-4 fw-bold">مرحبا@(Globals.appSettings?.OrganizationName)</h1>
                 <p class="lead text-muted">Discover our wide range of courses and start your learning journey today.</p>
                 <div class="d-flex gap-3 mt-4">
                     <RadzenButton Text="Browse Courses" Icon="school" ButtonStyle="ButtonStyle.Primary" Click="@(() => scrollToCourses())" />
@@ -32,6 +33,11 @@
         <div class="text-center p-5">
             <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="width: 100%; max-width: 400px; margin: 0 auto;" />
             <p class="mt-3">Loading courses...</p>
+            <RadzenDataList TItem="CeilUfas.Models.ceilufas.Course" Data="@courses" AllowPaging="true" WrapItems="true" >
+                <Template>
+                    <RadzenTableHeader></RadzenTableHeader>
+                </Template>
+            </RadzenDataList>
         </div>
     }
     else
@@ -201,6 +207,11 @@
     protected IEnumerable<Course> FilteredCourses => Courses
         .Where(c => selectedCourseTypeId == 0 || c.CourseTypeId == selectedCourseTypeId)
         .OrderBy(c => c.Name);
+
+    [Inject]
+    protected CeilUfas.ceilufasService ceilufasService { get; set; }
+
+    protected System.Linq.IQueryable<CeilUfas.Models.ceilufas.Course> courses;
     
     protected override async Task OnInitializedAsync()
     {
@@ -229,6 +240,7 @@
         {
             IsLoading = false;
         }
+        courses = await ceilufasService.GetCourses();
     }
 
     protected void NavigateToRegistration(int courseId)
