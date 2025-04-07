@@ -41,7 +41,7 @@
             </RadzenFormField>
             <RadzenFormField Text="Course" Variant="Variant.Filled">
                   <ChildContent>
-                    <RadzenDropDown Data="@(coursesForCourseId)" TextProperty="Image" ValueProperty="Id" AllowClear=true
+                    <RadzenDropDown Data="@(coursesForCourseId)" TextProperty="Name" ValueProperty="Id" AllowClear=true
                         Disabled=@(hasCourseIdValue)  style="display: block; width: 100%" @bind-Value="@(courseLevel.CourseId)" Name="CourseId"
                            />
               </ChildContent>
@@ -49,7 +49,7 @@
             <RadzenFormField Text="Course Level1" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenDropDown Data="@(courseLevelsForPreviousCourseLevelId)" TextProperty="NameAr" ValueProperty="Id" AllowClear=true
-                        Disabled=@(hasPreviousCourseLevelIdValue)  style="display: block; width: 100%" @bind-Value="@(courseLevel.PreviousCourseLevelId)" Name="PreviousCourseLevelId"
+                        Disabled=@(hasPreviousCourseLevelIdValue)  style="display: block; width: 100%" @bind-Value="@(courseLevel.PreviousCourseLevelId)" Name="PreviousCourseLevelId" Placeholder="Previous Level"
                            />
               </ChildContent>
             </RadzenFormField>

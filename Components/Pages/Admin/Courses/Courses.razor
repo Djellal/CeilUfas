@@ -38,8 +38,6 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="IsActive" Title="Is Active">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Property="Image" Title="Image">
-                </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.Course" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="course">
 
@@ -70,11 +68,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="NameAr" Title="Name Ar">
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Duration" Title="Duration">
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="Course.Image" Title="Course">
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="CourseLevel1.NameAr" Title="Course Level1">
+                        <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Property="CourseLevel1.NameAr" Title="Previous Level">
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="CeilUfas.Models.ceilufas.CourseLevel" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                             <Template Context="courseLevelChild">
