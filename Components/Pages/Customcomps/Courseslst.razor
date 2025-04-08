@@ -1,0 +1,39 @@
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Courseslst> L
+
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+
+<PageTitle>Courseslst</PageTitle>
+<RadzenRow>
+    <RadzenColumn Size="12">
+    </RadzenColumn>
+</RadzenRow>
+<RadzenCard>
+    <RadzenDataList TItem="CeilUfas.Models.ceilufas.Course" Data="@getCoursesResult" AllowPaging="true">
+        <Template>
+            <RadzenCard>
+                <RadzenHeading Text="@context.Name"></RadzenHeading>
+                <RadzenImage Style="width: 100px; height: 100px"></RadzenImage>
+            </RadzenCard>
+        </Template>
+    </RadzenDataList>
+</RadzenCard>
+@code {
+
+    [Inject]
+    protected CeilUfas.ceilufasService ceilufasService { get; set; }
+
+    protected System.Linq.IQueryable<CeilUfas.Models.ceilufas.Course> getCoursesResult;
+
+    protected override async Task OnInitializedAsync()
+    {
+        getCoursesResult = await ceilufasService.GetCourses();
+    }
+
+}

@@ -12,7 +12,6 @@ using Npgsql;
 
 // Configure Npgsql to use legacy timestamp behavior
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents().AddHubOptions(options => options.MaximumReceiveMessageSize = 10 * 1024 * 1024);
@@ -26,7 +25,6 @@ builder.Services.AddRadzenCookieThemeService(options =>
 builder.Services.AddHttpClient();
 builder.Services.AddLocalization();
 builder.Services.AddScoped<CeilUfas.ceilufasService>();
-
 builder.Services.AddDbContext<CeilUfas.Data.ceilufasContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("ceilufasConnection"));
@@ -70,15 +68,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-app.UseRequestLocalization(options => options.AddSupportedCultures("fr", "ar", "en").AddSupportedUICultures("fr", "ar", "en").SetDefaultCulture("fr"));
 app.UseHeaderPropagation();
+app.UseRequestLocalization(options => options.AddSupportedCultures("fr-FR").AddSupportedUICultures("fr-FR").SetDefaultCulture("fr-FR"));
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 app.Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationIdentityDbContext>().Database.Migrate();
-
 // Ensure roles exist
 using (var scope = app.Services.CreateScope())
 {
@@ -88,7 +85,6 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-
         Console.WriteLine(ex.Message);
     }
 }
