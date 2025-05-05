@@ -6,25 +6,40 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Professions</PageTitle>
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Professions</h1>
+        <a class="btn btn-primary" href="professions/create">
+            <i class="bi bi-plus-lg"></i> Create New
+        </a>
+    </div>
 
-<p>
-    <a href="professions/create">Create New</a>
-</p>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <QuickGrid Class="table table-hover mb-0" Items="context.Professions">
+                <PropertyColumn Title="Name" Property="profession => profession.Name" />
+                <PropertyColumn Title="Arabic Name" Property="profession => profession.NameAr" />
+                <PropertyColumn Title="Fee" Property="profession => profession.FeeValue" Format="C2" />
 
-<QuickGrid Class="table" Items="context.Professions">
-    <PropertyColumn Property="profession => profession.Name" />
-    <PropertyColumn Property="profession => profession.NameAr" />
-    <PropertyColumn Property="profession => profession.FeeValue" />
-
-    <TemplateColumn Context="profession">
-        <a href="@($"professions/edit?id={profession.Id}")">Edit</a> |
-        <a href="@($"professions/details?id={profession.Id}")">Details</a> |
-        <a href="@($"professions/delete?id={profession.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+                <TemplateColumn Title="Actions" Context="profession">
+                    <div class="btn-group btn-group-sm">
+                        <a class="btn btn-outline-primary" href="@($"professions/edit?id={profession.Id}")">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a class="btn btn-outline-info" href="@($"professions/details?id={profession.Id}")">
+                            <i class="bi bi-info-circle"></i>
+                        </a>
+                        <a class="btn btn-outline-danger" href="@($"professions/delete?id={profession.Id}")">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </TemplateColumn>
+            </QuickGrid>
+        </div>
+    </div>
+</div>
 
 @code {
     private ApplicationDbContext context = default!;
