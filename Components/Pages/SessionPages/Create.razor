@@ -1,0 +1,64 @@
+﻿@page "/sessions/create"
+@using Microsoft.EntityFrameworkCore
+@using Ceilufas.Models
+@inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Session</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Session" OnValidSubmit="AddSession" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="sessioncode" class="form-label">SessionCode:</label> 
+                <InputText id="sessioncode" @bind-Value="Session.SessionCode" class="form-control" /> 
+                <ValidationMessage For="() => Session.SessionCode" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="sessionname" class="form-label">SessionName:</label> 
+                <InputText id="sessionname" @bind-Value="Session.SessionName" class="form-control" /> 
+                <ValidationMessage For="() => Session.SessionName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="sessionnamear" class="form-label">SessionNameAr:</label> 
+                <InputText id="sessionnamear" @bind-Value="Session.SessionNameAr" class="form-control" /> 
+                <ValidationMessage For="() => Session.SessionNameAr" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="startdate" class="form-label">StartDate:</label> 
+                <InputDate id="startdate" @bind-Value="Session.StartDate" class="form-control" /> 
+                <ValidationMessage For="() => Session.StartDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="enddate" class="form-label">EndDate:</label> 
+                <InputDate id="enddate" @bind-Value="Session.EndDate" class="form-control" /> 
+                <ValidationMessage For="() => Session.EndDate" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/sessions">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Session Session { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddSession()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Sessions.Add(Session);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/sessions");
+    }
+}

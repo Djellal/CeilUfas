@@ -1,0 +1,40 @@
+﻿@page "/sessions"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Ceilufas.Models
+@using Ceilufas.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="sessions/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Sessions">
+    <PropertyColumn Property="session => session.SessionCode" />
+    <PropertyColumn Property="session => session.SessionName" />
+    <PropertyColumn Property="session => session.SessionNameAr" />
+    <PropertyColumn Property="session => session.StartDate" />
+    <PropertyColumn Property="session => session.EndDate" />
+
+    <TemplateColumn Context="session">
+        <a href="@($"sessions/edit?id={session.Id}")">Edit</a> |
+        <a href="@($"sessions/details?id={session.Id}")">Details</a> |
+        <a href="@($"sessions/delete?id={session.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

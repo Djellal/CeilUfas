@@ -1,0 +1,109 @@
+﻿@page "/sessions/edit"
+@using Microsoft.EntityFrameworkCore
+@using Ceilufas.Models
+@inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Session</h2>
+<hr />
+@if (Session is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Session" OnValidSubmit="UpdateSession" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Session.Id" value="@Session.Id" />
+                <div class="mb-3">
+                    <label for="sessioncode" class="form-label">SessionCode:</label>
+                    <InputText id="sessioncode" @bind-Value="Session.SessionCode" class="form-control" />
+                    <ValidationMessage For="() => Session.SessionCode" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="sessionname" class="form-label">SessionName:</label>
+                    <InputText id="sessionname" @bind-Value="Session.SessionName" class="form-control" />
+                    <ValidationMessage For="() => Session.SessionName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="sessionnamear" class="form-label">SessionNameAr:</label>
+                    <InputText id="sessionnamear" @bind-Value="Session.SessionNameAr" class="form-control" />
+                    <ValidationMessage For="() => Session.SessionNameAr" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="startdate" class="form-label">StartDate:</label>
+                    <InputDate id="startdate" @bind-Value="Session.StartDate" class="form-control" />
+                    <ValidationMessage For="() => Session.StartDate" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="enddate" class="form-label">EndDate:</label>
+                    <InputDate id="enddate" @bind-Value="Session.EndDate" class="form-control" />
+                    <ValidationMessage For="() => Session.EndDate" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/sessions">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Session? Session { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Session ??= await context.Sessions.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Session is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateSession()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Session!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!SessionExists(Session!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/sessions");
+    }
+
+    private bool SessionExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Sessions.Any(e => e.Id == id);
+    }
+}
