@@ -1,0 +1,38 @@
+﻿@page "/professions"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Ceilufas.Models
+@using Ceilufas.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="professions/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Professions">
+    <PropertyColumn Property="profession => profession.Name" />
+    <PropertyColumn Property="profession => profession.NameAr" />
+    <PropertyColumn Property="profession => profession.FeeValue" />
+
+    <TemplateColumn Context="profession">
+        <a href="@($"professions/edit?id={profession.Id}")">Edit</a> |
+        <a href="@($"professions/details?id={profession.Id}")">Details</a> |
+        <a href="@($"professions/delete?id={profession.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

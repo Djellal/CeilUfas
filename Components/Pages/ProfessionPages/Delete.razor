@@ -1,0 +1,63 @@
+﻿@page "/professions/delete"
+@using Microsoft.EntityFrameworkCore
+@using Ceilufas.Models
+@inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Profession</h2>
+    <hr />
+    @if (profession is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@profession.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">NameAr</dt>
+            <dd class="col-sm-10">@profession.NameAr</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">FeeValue</dt>
+            <dd class="col-sm-10">@profession.FeeValue</dd>
+        </dl>
+        <EditForm method="post" Model="profession" OnValidSubmit="DeleteProfession" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(profession is null)">Delete</button> |
+            <a href="/professions">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private Profession? profession;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        profession = await context.Professions.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (profession is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteProfession()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Professions.Remove(profession!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/professions");
+    }
+}

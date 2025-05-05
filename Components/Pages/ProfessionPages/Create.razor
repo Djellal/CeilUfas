@@ -1,0 +1,54 @@
+﻿@page "/professions/create"
+@using Microsoft.EntityFrameworkCore
+@using Ceilufas.Models
+@inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Profession</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Profession" OnValidSubmit="AddProfession" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Profession.Name" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Profession.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="namear" class="form-label">NameAr:</label> 
+                <InputText id="namear" @bind-Value="Profession.NameAr" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Profession.NameAr" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="feevalue" class="form-label">FeeValue:</label> 
+                <InputNumber id="feevalue" @bind-Value="Profession.FeeValue" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Profession.FeeValue" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/professions">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Profession Profession { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddProfession()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Professions.Add(Profession);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/professions");
+    }
+}

@@ -6,27 +6,31 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Sessions</PageTitle>
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">Sessions</h1>
 
-<p>
-    <a href="sessions/create">Create New</a>
-</p>
+    <div class="mb-3">
+        <a class="btn btn-primary" href="sessions/create">Create New</a>
+    </div>
 
-<QuickGrid Class="table" Items="context.Sessions">
-    <PropertyColumn Property="session => session.SessionCode" />
-    <PropertyColumn Property="session => session.SessionName" />
-    <PropertyColumn Property="session => session.SessionNameAr" />
-    <PropertyColumn Property="session => session.StartDate" />
-    <PropertyColumn Property="session => session.EndDate" />
+    <div class="table-responsive">
+        <QuickGrid Class="table table-striped table-bordered align-middle" Items="context.Sessions">
+            <PropertyColumn Property="session => session.SessionCode" Title="Code" />
+            <PropertyColumn Property="session => session.SessionName" Title="Name" />
+            <PropertyColumn Property="session => session.SessionNameAr" Title="Arabic Name" />
+            <PropertyColumn Property="session => session.StartDate" Title="Start Date" />
+            <PropertyColumn Property="session => session.EndDate" Title="End Date" />
 
-    <TemplateColumn Context="session">
-        <a href="@($"sessions/edit?id={session.Id}")">Edit</a> |
-        <a href="@($"sessions/details?id={session.Id}")">Details</a> |
-        <a href="@($"sessions/delete?id={session.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+            <TemplateColumn Context="session">
+                <a class="btn btn-sm btn-outline-secondary me-1" href="@($"sessions/edit?id={session.Id}")">Edit</a>
+                <a class="btn btn-sm btn-outline-info me-1" href="@($"sessions/details?id={session.Id}")">Details</a>
+                <a class="btn btn-sm btn-outline-danger" href="@($"sessions/delete?id={session.Id}")">Delete</a>
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
+</div>
 
 @code {
     private ApplicationDbContext context = default!;
