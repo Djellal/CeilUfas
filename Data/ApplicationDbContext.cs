@@ -1,18 +1,18 @@
-using Ceilufas.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Ceilufas.Models;
 
-namespace Ceilufas.Data
+namespace Ceilufas.Data;
+
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
-    {
-        public DbSet<Session> Sessions { get; set; }
-        public DbSet<AppSetting> AppSettings { get; set; }        
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<CourseLevel> CourseLevels { get; set; }
-        public DbSet<State> States { get; set; }
-        public DbSet<Municipality> Municipalities { get; set; }
-        public DbSet<CourseRegistration> CourseRegistrations { get; set; }
-        public DbSet<Profession> Professions { get; set; }
-    }
+    public DbSet<Session> Sessions { get; set; } = default!;
+    public DbSet<AppSetting> AppSettings { get; set; }= default!;
+    public DbSet<State> States { get; set; }= default!;
+    public DbSet<Municipality> Municipalities { get; set; }= default!;
+    public DbSet<Profession> Professions { get; set; }= default!;
+    public DbSet<Course> Courses { get; set; }= default!;
+    public DbSet<CourseLevel> CourseLevels { get; set; }= default!;
+    public DbSet<CourseRegistration> CourseRegistrations { get; set; }= default!;
+
 }

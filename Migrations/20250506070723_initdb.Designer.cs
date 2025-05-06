@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ceilufas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250505104545_initdb")]
+    [Migration("20250506070723_initdb")]
     partial class initdb
     {
         /// <inheritdoc />
