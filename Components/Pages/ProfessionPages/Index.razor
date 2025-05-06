@@ -1,0 +1,53 @@
+﻿@page "/professions"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Ceilufas.Models
+@using Ceilufas.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Ceilufas.Data.ApplicationDbContext> DbFactory
+
+<PageTitle>Professions</PageTitle>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Professions</h1>
+        <a class="btn btn-primary" href="professions/create">
+            <i class="bi bi-plus-lg"></i> Create New
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <QuickGrid Class="table table-hover mb-0" Items="context.Professions">
+                <PropertyColumn Title="Name" Property="profession => profession.Name" />
+                <PropertyColumn Title="Arabic Name" Property="profession => profession.NameAr" />
+                <PropertyColumn Title="Fee" Property="profession => profession.FeeValue" Format="C2" />
+
+                <TemplateColumn Title="Actions" Context="profession">
+                    <div class="btn-group btn-group-sm">
+                        <a class="btn btn-outline-primary" href="@($"professions/edit?id={profession.Id}")">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a class="btn btn-outline-info" href="@($"professions/details?id={profession.Id}")">
+                            <i class="bi bi-info-circle"></i>
+                        </a>
+                        <a class="btn btn-outline-danger" href="@($"professions/delete?id={profession.Id}")">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </TemplateColumn>
+            </QuickGrid>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
